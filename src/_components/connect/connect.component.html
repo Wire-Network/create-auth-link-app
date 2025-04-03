@@ -1,0 +1,29 @@
+<div class="wallet-connect">
+    <div *ngIf="!connectService.connected">
+        <button (click)="connect()">Connect MetaMask</button>
+    </div>
+    <div *ngIf="connectService.connected" class="wallet-info">
+        <div *ngIf="!connectService.currentAccount" class="account-selection">
+            <h3>Select an Account:</h3>
+            <div class="accounts-list">
+                <button 
+                    *ngFor="let account of connectService.availableAccounts"
+                    (click)="selectAccount(account.address)"
+                    class="account-button">
+                    <div class="account-info-row">
+                        <span class="account-address">{{ account.username }}</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div *ngIf="connectService.currentAccount" class="account-info">
+            <p class="address">{{ connectService.currentAccount.username }}</p>
+            <p>Chain ID: {{ connectService.currentChainId }}</p>
+            <div class="actions">
+                <button (click)="disconnect()" class="disconnect-button">Disconnect</button>
+                <button (click)="changeAccount()" class="change-account-button">Change Account</button>
+                <button routerLink="/create-link" class="create-link-button">Create Link</button>
+            </div>
+        </div>
+    </div>
+</div>

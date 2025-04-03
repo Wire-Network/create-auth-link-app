@@ -1,0 +1,70 @@
+.wallet-connect {
+    padding: 20px;
+    text-align: center;
+
+    button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+
+        &:hover {
+            background-color: #45a049;
+        }
+
+        &.disconnect-button {
+            background-color: #f44336;
+            &:hover {
+                background-color: #da190b;
+            }
+        }
+
+        &.change-account-button {
+            background-color: #2196F3;
+            &:hover {
+                background-color: #0b7dda;
+            }
+        }
+
+        &.create-link-button {
+            background-color: #9c27b0;
+            &:hover {
+                background-color: #7b1fa2;
+            }
+        }
+    }
+
+    .wallet-info {
+        margin-top: 20px;
+    }
+
+    .account-selection {
+        h3 {
+            margin-bottom: 15px;
+        }
+    }
+
+    .accounts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .account-info {
+        p {
+            margin: 10px 0;
+        }
+    }
+
+    .actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+} 

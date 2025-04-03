@@ -1,0 +1,145 @@
+<ion-content>
+    <div class="centered-container">
+        <div class="above fadeInDown">
+            <h3>Create Link</h3>
+        </div>
+        <div class="my-card fadeInUp">
+            <ng-container [ngSwitch]="step">
+                <ng-container *ngSwitchCase="1">
+                    <div class="step-container fadeInRight">
+                        <div class="step-header">
+                            <div class="step-topper">
+                                <div class="text">Step 1 of 2</div>
+                                <div class="dots">
+                                    <ion-icon size="large" color="secondary" name="radio-button-on-outline"></ion-icon>
+                                    <ion-icon size="large" color="secondary" name="radio-button-off-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="title">
+                                <ion-icon name="link-outline" size="large"></ion-icon>
+                                <div class="title-text">CREATE LINK</div>
+                            </div>
+                            <div class="subtitle">
+                                Officially link your Web3 wallet to your WNS
+                                account
+                            </div>
+                        </div>
+
+                        <div class="step-body">
+                            <div class="text">
+                                By clicking confirm you agree to link the
+                                following wallet with your account.
+                            </div>
+                            <div class="connect">
+                                <div class="top">
+                                    <ion-icon name="at-outline"></ion-icon>
+                                    {{ settle.username }}
+                                </div>
+                                <div class="middle">
+                                    <ion-icon siza="large" name="link-outline"></ion-icon>
+                                </div>
+                                <div class="bott courier">
+                                    <ion-icon name="wallet-outline"></ion-icon>
+                                    {{ connect.address | address }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-footer">
+                            <button class="secondary fill full" (click)="step1()">Create Link</button>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="2">
+                    <div class="step-container fadeInRight">
+                        <div class="step-header">
+                            <div class="step-topper">
+                                <div class="text">Step 2 of 2</div>
+                                <div class="dots">
+                                    <ion-icon size="large" color="secondary" name="radio-button-on-outline"></ion-icon>
+                                    <ion-icon size="large" color="secondary" name="radio-button-on-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="title">
+                                <ion-icon name="person-add-outline" size="large"></ion-icon>
+                                <div class="title-text">Link Auth</div>
+                            </div>
+                            <div class="subtitle">
+                                Your web3 wallet & WNS account have been linked.
+                            </div>
+                        </div>
+
+                        <div class="step-body">
+                            <div class="text">
+                                Click to provide authority to interact with the
+                                Settlement contracts.
+                            </div>
+                            <div class="connect connected">
+                                <div class="top">
+                                    <ion-icon color="success" name="at-outline"></ion-icon>
+                                    {{ settle.username }}
+                                </div>
+                                <div class="middle">
+                                    <ion-icon color="success" siza="large" name="link-outline"></ion-icon>
+                                </div>
+                                <div class="bott courier">
+                                    <ion-icon color="success" name="wallet-outline"></ion-icon>
+                                    {{ connect.address | address }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-footer">
+                            <button class="secondary fill full"(click)="step2()">Finalize</button>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="3">
+                    <div class="step-container fadeInRight">
+                        <div class="step-header">
+                            <div class="step-topper">
+                                <div class="text">Complete</div>
+                                <div class="dots">
+                                    <ion-icon size="large" color="success" name="radio-button-on-outline"></ion-icon>
+                                    <ion-icon size="large" color="success" name="radio-button-on-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="title">
+                                <ion-icon name="checkmark-done-outline" size="large"></ion-icon>
+                                <div class="title-text">
+                                    Create Link Complete
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-body">
+                            <div class="text">
+                                Your WNS account and wallet have been
+                                successfully linked.
+                            </div>
+                            <div class="connect connected">
+                                <div class="top">
+                                    <ion-icon color="success" name="at-outline"></ion-icon>
+                                    {{ settle.username }}
+                                </div>
+                                <div class="middle">
+                                    <ion-icon color="success" siza="large" name="link-outline"></ion-icon>
+                                </div>
+                                <div class="bott courier">
+                                    <ion-icon color="success" name="wallet-outline"></ion-icon>
+                                    {{ connect.address | address }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-footer">
+                            <button class="secondary fill full" routerLink="/wallet">Go to Wallet</button>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</ion-content>
