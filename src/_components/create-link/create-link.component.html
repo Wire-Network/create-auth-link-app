@@ -1,9 +1,5 @@
 <ion-content>
     <div class="centered-container">
-        <div class="above fadeInDown">
-            <h3>Create Link</h3>
-        </div>
-        <div class="my-card fadeInUp">
             <ng-container [ngSwitch]="step">
                 <ng-container *ngSwitchCase="1">
                     <div class="step-container fadeInRight">
@@ -33,7 +29,7 @@
                             <div class="connect">
                                 <div class="top">
                                     <ion-icon name="at-outline"></ion-icon>
-                                    {{ settle.username }}
+                                    {{ accountService.username }}
                                 </div>
                                 <div class="middle">
                                     <ion-icon siza="large" name="link-outline"></ion-icon>
@@ -46,7 +42,10 @@
                         </div>
 
                         <div class="step-footer">
-                            <button class="secondary fill full" (click)="step1()">Create Link</button>
+                            <button class="secondary fill full" (click)="step1()" [disabled]="loading">
+                                <span *ngIf="!loading">Create Link</span>
+                                <ion-spinner *ngIf="loading" name="dots"></ion-spinner>
+                            </button>
                         </div>
                     </div>
                 </ng-container>
@@ -78,7 +77,7 @@
                             <div class="connect connected">
                                 <div class="top">
                                     <ion-icon color="success" name="at-outline"></ion-icon>
-                                    {{ settle.username }}
+                                    {{ accountService.username }}
                                 </div>
                                 <div class="middle">
                                     <ion-icon color="success" siza="large" name="link-outline"></ion-icon>
@@ -91,7 +90,10 @@
                         </div>
 
                         <div class="step-footer">
-                            <button class="secondary fill full"(click)="step2()">Finalize</button>
+                            <button class="secondary fill full" (click)="step2()" [disabled]="loading">
+                                <span *ngIf="!loading">Finalize</span>
+                                <ion-spinner *ngIf="loading" name="dots"></ion-spinner>
+                            </button>
                         </div>
                     </div>
                 </ng-container>
@@ -122,7 +124,7 @@
                             <div class="connect connected">
                                 <div class="top">
                                     <ion-icon color="success" name="at-outline"></ion-icon>
-                                    {{ settle.username }}
+                                    {{ accountService.username }}
                                 </div>
                                 <div class="middle">
                                     <ion-icon color="success" siza="large" name="link-outline"></ion-icon>
@@ -134,12 +136,11 @@
                             </div>
                         </div>
 
-                        <div class="step-footer">
+                        <!-- <div class="step-footer">
                             <button class="secondary fill full" routerLink="/wallet">Go to Wallet</button>
-                        </div>
+                        </div> -->
                     </div>
                 </ng-container>
             </ng-container>
         </div>
-    </div>
 </ion-content>

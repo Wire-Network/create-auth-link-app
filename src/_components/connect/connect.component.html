@@ -17,13 +17,212 @@
             </div>
         </div>
         <div *ngIf="connectService.currentAccount" class="account-info">
-            <p class="address">{{ connectService.currentAccount.username }}</p>
-            <p>Chain ID: {{ connectService.currentChainId }}</p>
+            <h3 class="address">{{ connectService.currentAccount.username }}</h3>
+            
+            <!-- Account Status Information -->
+            <div class="account-status">
+                <div *ngIf="accountService.noAccountSubject.value" class="account-not-found">
+                    <span class="status-badge error">Account Not Found</span>
+                    <p>No Wire account exists for this address yet.</p>
+                </div>
+                
+                <div *ngIf="!accountService.noAccountSubject.value" class="account-found">
+                    <span class="status-badge success">Account Found</span>
+                    
+                    <!-- Account Details -->
+                    <div class="account-details" *ngIf="accountService.currentAccount">
+                        <div class="detail-row">
+                            <span class="label">Wire Username:</span>
+                            <span class="value">{{ accountService.username }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Created:</span>
+                            <span class="value">{{ getCreatedDate(accountService.currentAccount.created) | date:'short' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Last Updated:</span>
+                            <span class="value">{{ getLastUpdateDate(accountService.currentAccount.last_code_update) | date:'short' }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">CPU Available:</span>
+                            <span class="value">{{ formatCpuAvailable(accountService.currentAccount.cpu_limit.available) | number }} μs</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">NET Available:</span>
+                            <span class="value">{{ formatNetAvailable(accountService.currentAccount.net_limit.available) | number }} bytes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="link-status">
+                <h4>Link Status:</h4>
+                <ng-container *ngIf="(linkService.linkExists$ | async) === false">
+                    <span class="status-badge warning">No Link</span>
+                    <p>No link between your Ethereum address and Wire account.</p>
+                    
+                    <!-- Only show Create Link button if account exists -->
+                    <ng-container *ngIf="!accountService.noAccountSubject.value">
+                        <button routerLink="/create-link" class="create-link-button">Create Link</button>
+                    </ng-container>
+                    
+                    <!-- Show account creation instructions if no account exists -->
+                    <ng-container *ngIf="accountService.noAccountSubject.value">
+                        <div class="account-creation-info">
+                            <p>Create account first:</p>
+                            <ul>
+                                <li>If you are using Testnet, use Wire Hub to create an account</li>
+                                <li>If using local chain, use the clio command</li>
+                            </ul>
+                        </div>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="linkService.linkExists$ | async">
+                    <span class="status-badge success">Linked</span>
+                    <p>Your Ethereum address is linked to your Wire account.</p>
+                </ng-container>
+            </div>
+            
             <div class="actions">
-                <button (click)="disconnect()" class="disconnect-button">Disconnect</button>
                 <button (click)="changeAccount()" class="change-account-button">Change Account</button>
-                <button routerLink="/create-link" class="create-link-button">Create Link</button>
+                <button (click)="disconnect()" class="disconnect-button">Disconnect</button>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .wallet-connect {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: var(--ion-color-dark);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .account-status, .link-status {
+        margin: 16px 0;
+        padding: 12px;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+    }
+    
+    .account-details {
+        margin-top: 12px;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .label {
+        font-weight: 500;
+        color: var(--ion-color-medium);
+    }
+    
+    .value {
+        font-weight: 400;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .status-badge.success {
+        background-color: var(--ion-color-success);
+        color: rgb(60, 195, 23);
+    }
+    
+    .status-badge.error {
+        background-color: var(--ion-color-danger);
+        color: rgb(182, 65, 11);
+    }
+    
+    .status-badge.warning {
+        background-color: var(--ion-color-warning);
+        color: black;
+    }
+    
+    .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+    }
+    
+    button {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        background-color: var(--ion-color-primary);
+        color: white;
+        border: none;
+    }
+    
+    .disconnect-button {
+        background-color: var(--ion-color-danger);
+    }
+    
+    .change-account-button {
+        background-color: var(--ion-color-secondary);
+    }
+    
+    .create-link-button {
+        background-color: var(--ion-color-success);
+    }
+    
+    .accounts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 12px;
+    }
+    
+    .account-button {
+        width: 100%;
+        text-align: left;
+        background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+        border: 1px solid rgba(var(--ion-color-primary-rgb), 0.3);
+    }
+    
+    h3, h4 {
+        margin: 0 0 12px 0;
+    }
+    
+    p {
+        margin: 8px 0;
+        color: var(--ion-color-medium);
+    }
+    
+    .account-creation-info {
+        background-color: rgba(var(--ion-color-warning-rgb), 0.1);
+        border: 1px solid rgba(var(--ion-color-warning-rgb), 0.3);
+        border-radius: 4px;
+        padding: 10px;
+        margin-top: 10px;
+    }
+    
+    .account-creation-info p {
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    
+    .account-creation-info ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    
+    .account-creation-info li {
+        margin-bottom: 5px;
+        color: var(--ion-color-medium);
+    }
+</style>

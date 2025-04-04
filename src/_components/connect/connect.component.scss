@@ -3,13 +3,17 @@
     text-align: center;
 
     button {
-        padding: 10px 20px;
+        padding: 8px 16px;
+        min-height: 40px;
+        min-width: 140px;
+        max-width: 200px;
         background-color: #4CAF50;
         color: white;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         margin: 5px;
+        font-size: 16px;
 
         &:hover {
             background-color: #45a049;
@@ -50,9 +54,14 @@
     .accounts-list {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         max-width: 400px;
         margin: 0 auto;
+
+        button {
+            width: 100%;
+            max-width: 100%;
+        }
     }
 
     .account-info {
@@ -64,7 +73,7 @@
     .actions {
         margin-top: 20px;
         display: flex;
-        gap: 10px;
+        gap: 8px;
         justify-content: center;
     }
 } 

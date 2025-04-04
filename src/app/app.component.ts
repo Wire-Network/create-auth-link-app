@@ -11,5 +11,5 @@ import { ChainSelectorComponent } from '../_components/chain-selector/chain-sele
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'wallet-connect-app';
+  title = '';
 }

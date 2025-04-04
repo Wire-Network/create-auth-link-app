@@ -51,7 +51,7 @@ export class ConnectService {
                 method: 'eth_requestAccounts' 
             });
 
-            console.log('accounts', accounts);
+            console.log('Ethereum accounts from wallet:', accounts);
 
             // Get the current chain ID
             const chainId = await this.provider.request({ 
@@ -62,8 +62,10 @@ export class ConnectService {
             const availableAccounts = accounts.map((address: string, index: number) => ({
                 address,
                 username: this.getShortAddress(address),
-                // name: `Account ${index + 1}`
+                type: 'metamask' as const
             }));
+
+            console.log('Available accounts with metadata:', availableAccounts);
 
             // Update connection state with all accounts, but no selected account yet
             this.connectionSubject.next({ 
