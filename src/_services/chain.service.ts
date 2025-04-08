@@ -18,24 +18,19 @@ export class ChainService {
     public stats?: WireChainStats;
     public recentBlocks: API.v1.GetBlockResponse[] = [];
 
-    // Chain Configuration
     private chains: WireChain[] = [
         {
-            name: 'Local Chain',
+            name: 'Local Chain 1',
             id: "local",
-            endpoint: 'https://det-dev.gitgo.app',
-            // hyperion: 'https://dev-hyperion.gitgo.app/v1/',
-            // websocket: 'ws://det-dev.gitgo.app:8888',
+            endpoint: 'https://svetla.gitgo.app',
             namespace: 'sysio',
             coreSymbol: 'SYS',
-            selected: true
+            selected: false
         },
         {
-            name: 'Local Chain 2',
-            id: "local-svet",
-            endpoint: 'https://svetla.gitgo.app',
-            // hyperion: 'https://dev-hyperion.gitgo.app/v1/',
-            // websocket: 'ws://det-dev.gitgo.app:8888',
+            name: 'Devnet',
+            id: "devnet",
+            endpoint: 'https://det-dev.gitgo.app',
             namespace: 'sysio',
             coreSymbol: 'SYS',
             selected: false
@@ -44,7 +39,7 @@ export class ChainService {
             name: 'Wire Testnet',
             id: "065dcca2dc758af25bcf3b878260a19dd1b81e4597f2af15a262a0c67f1e0106",
             endpoint: 'https://testnet-00.wire.foundation',
-            // hyperion: 'https://testnet-hyperion.wire.foundation',
+            hyperion: 'https://testnet-hyperion.wire.foundation',
             websocket: 'ws://testnet-ship.wire.foundation',
             watchdawg: 'https://dawg.wire.foundation',
             namespace: 'sysio',
@@ -92,13 +87,11 @@ export class ChainService {
     selectChain(chainId: string): void {
         const previousChain = this.selectedChain;
         
-        // Update chain selection
         this.chains = this.chains.map(chain => ({
             ...chain,
             selected: chain.id === chainId
         }));
 
-        // Save to localStorage
         if (this.isBrowser) {
             localStorage.setItem('wire-chains', JSON.stringify(this.chains));
         }
@@ -148,7 +141,7 @@ export class ChainService {
     async updateChainStats(): Promise<void> {
         try {
             const info = await this.getChainInfo();
-            // Initialize with default values, these should be updated with actual data
+
             this.stats = {
                 maxRam: 0,
                 ramUsed: 0,

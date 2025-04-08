@@ -33,7 +33,6 @@ export class AccountService {
             console.log('V1 API failed, trying V2 API:', err);
             if (!tryOnce) {
                 try {
-                    // Try v2 API as fallback
                     const res: any = await api.v2.state.get_account(name.toString());
                     console.log('V2 API response:', JSON.stringify(res));
                     if (res.statusCode && res.statusCode == 500) throw new Error('Account not found');
@@ -121,25 +120,6 @@ export class AccountService {
     async connectAccount(nameOrAddress: string): Promise<boolean> {
         // Update account information and emit changes to subscribers
         return await this.updateAccount(nameOrAddress);
-    }
-
-    async createAccount(username: string): Promise<boolean> {
-        try {
-            // Check if account already exists
-            const existingAccount = await this.getAccount(username);
-            if (existingAccount) {
-                console.warn('Account already exists:', username);
-                return false;
-            }
-
-            // TODO: Implement account creation transaction
-            // This will depend on your specific chain's account creation process
-            console.log('Creating account:', username);
-            return true;
-        } catch (error) {
-            console.error('Error creating account:', error);
-            return false;
-        }
     }
 
     clearAccount(): void {

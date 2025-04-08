@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Action, API, Name, PermissionLevel, Transaction, SignedTransaction, ABI, AnyAction, APIError, NameType } from '@wireio/core';
+import { Action, API, Transaction, SignedTransaction, ABI, AnyAction, APIError, NameType } from '@wireio/core';
 import { ChainService } from './chain.service';
-import { AccountService } from './account.service';
 import { ConnectService } from '../_components/connect/connect.service';
 import { ethers } from 'ethers';
 import { evmSigToWIRE, getCompressedPublicKey } from '@wireio/wns';
-import { KeyService } from './key.service';
 
 export interface TransactionResult {
     transactionId: string;
@@ -33,9 +31,7 @@ export class TransactionService {
 
     constructor(
         private chainService: ChainService,
-        private accountService: AccountService,
         private connectService: ConnectService,
-        private keyService: KeyService
     ) {}
 
     async pushTransaction(action: AnyAction | AnyAction[]): Promise<API.v1.PushTransactionResponse> {
@@ -46,8 +42,8 @@ export class TransactionService {
             const transaction = Transaction.from({ ...header, actions });
             const digest = transaction.signingDigest(info.chain_id);
             const messageBytes = ethers.getBytes('0x' + digest.hexString);
-            const eth_sig = await this.connectService.signWeb3Message(messageBytes).catch(err => { throw new Error(err); });
-            const signature = evmSigToWIRE(eth_sig, 'EM');
+            const ethSig = await this.connectService.signWeb3Message(messageBytes).catch(err => { throw new Error(err); });
+            const signature = evmSigToWIRE(ethSig, 'EM');
             const signedTrx = SignedTransaction.from({ ...transaction, signatures: [signature] });
             return this.chainService.api.v1.chain.push_transaction(signedTrx);
         } catch (e: any) {
@@ -60,87 +56,6 @@ export class TransactionService {
             }
         }
     }
-
-    // async sendTransaction(actions: Action[]): Promise<TransactionResult> {
-    //     const username = this.accountService.username;
-    //     if (!username) {
-    //         throw new Error('No username available for transaction');
-    //     }
-
-    //     try {
-    //         // Add transaction to pending list
-    //         const pendingTxs = this.pendingTransactionsSubject.value;
-    //         this.pendingTransactionsSubject.next([...pendingTxs, 'pending']);
-
-    //         // Get the latest blockchain info
-    //         const info = await this.chainService.api.v1.chain.get_info();
-    //         const header = info.getTransactionHeader();
-            
-    //         console.log('Transaction header:', header);
-            
-    //         // Create transaction
-    //         const transaction = Transaction.from({ ...header, actions });
-            
-    //         // Sign the transaction with wallet
-    //         const digest = transaction.signingDigest(info.chain_id);
-    //         const messageBytes = ethers.getBytes('0x' + digest.hexString);
-    //         console.log('Signing digest:', digest.hexString);
-            
-    //         const ethSignature = await this.connectService.signWeb3Message(messageBytes);
-    //         const wireSignature = evmSigToWIRE(ethSignature, 'EM');
-            
-    //         console.log('Signature:', { ethSignature, wireSignature });
-            
-    //         // Create signed transaction
-    //         const signedTransaction = SignedTransaction.from({ 
-    //             ...transaction, 
-    //             signatures: [wireSignature] 
-    //         });
-            
-    //         // Push the transaction
-    //         const result = await this.chainService.api.v1.chain.push_transaction(signedTransaction);
-            
-    //         console.log('Transaction result:', result);
-
-    //         // Update pending transactions
-    //         this.removePendingTransaction('pending');
-
-    //         return {
-    //             transactionId: result.transaction_id,
-    //             blockNum: result.processed.block_num,
-    //             status: 'executed'
-    //         };
-    //     } catch (error: any) {
-    //         // Remove from pending list
-    //         this.removePendingTransaction('pending');
-    //         console.error('Transaction failed:', error);
-
-    //         return {
-    //             transactionId: '',
-    //             blockNum: 0,
-    //             status: 'failed',
-    //             error: error.message || 'Transaction failed'
-    //         };
-    //     }
-    // }
-
-    private removePendingTransaction(txId: string): void {
-        const pendingTxs = this.pendingTransactionsSubject.value;
-        this.pendingTransactionsSubject.next(
-            pendingTxs.filter(id => id !== txId)
-        );
-    }
-
-    private getExpirationTime(): string {
-        const date = new Date();
-        date.setMinutes(date.getMinutes() + 30); // 30 minutes from now
-        return date.toISOString().split('.')[0];
-    }
-
-    get hasPendingTransactions(): boolean {
-        return this.pendingTransactionsSubject.value.length > 0;
-    }
-
     // Helper method to fetch ABIs and create actions
     async anyToAction(action: AnyAction | AnyAction[]): Promise<Action[]> {
         if (!Array.isArray(action)) action = [action];
@@ -159,7 +74,6 @@ export class TransactionService {
             if (knownAbis.has(accountName)) {
                 actions.push(Action.from(act, knownAbis.get(accountName)!));
             } else {
-                // Fallback if no ABI is available
                 actions.push(Action.from(act));
             }
         }
@@ -170,17 +84,17 @@ export class TransactionService {
     async createLinkTransaction(username: string, pubKey: string): Promise<any> {
         const compressed = getCompressedPublicKey(pubKey);
         const nonce = new Date().getTime();
-        const msg_hash = ethers.keccak256(new Uint8Array(Buffer.from(compressed + nonce + username)));
-        const messageBytes = ethers.getBytes(msg_hash);
-        const eth_sig = await this.connectService.signWeb3Message(messageBytes).catch(err => { throw new Error(err); });
-        const wire_sig = evmSigToWIRE(eth_sig);
-        const create_link_receipt = await this.pushTransaction({
+        const msgHash = ethers.keccak256(new Uint8Array(Buffer.from(compressed + nonce + username)));
+        const messageBytes = ethers.getBytes(msgHash);
+        const ethSig = await this.connectService.signWeb3Message(messageBytes).catch(err => { throw new Error(err); });
+        const wireSig = evmSigToWIRE(ethSig);
+        const createLinkReceipt = await this.pushTransaction({
             account: 'auth.msg',
             name: 'createlink',
             authorization: [{ actor: username, permission: 'active' }],
             data: {
-                sig: wire_sig,
-                msg_hash: msg_hash.slice(2),
+                sig: wireSig,
+                msg_hash: msgHash.slice(2),
                 nonce: nonce,
                 account_name: username,
             },
@@ -189,7 +103,7 @@ export class TransactionService {
             throw new Error(err);
         });
 
-        return create_link_receipt;
+        return createLinkReceipt;
     }
 
     async linkAuthTransaction(username: string):Promise<any> {
@@ -211,29 +125,4 @@ export class TransactionService {
 
         return this.pushTransaction(linkAuthActions);
     }
-
-    // async linkAuthTransaction(username: string): Promise<TransactionResult> {
-    //     const action: AnyAction = {
-    //         account: Name.from(this.chainService.namespace),
-    //         name: Name.from('linkauth'),
-    //         authorization: [
-    //             {
-    //                 actor: Name.from(username),
-    //                 permission: Name.from('active')
-    //             }
-    //         ],
-    //         data: {
-    //             account: username,
-    //             code: 'auth.msg',
-    //             type: 'createlink',
-    //             requirement: 'active'
-    //         }
-    //     };
-        
-    //     // First fetch the ABI to properly serialize the action
-    //     const actions = await this.anyToAction(action);
-    //     // return this.sendTransaction(actions);
-
-    //     return [] as any
-    // }
 } 

@@ -49,7 +49,7 @@ export interface WireChain {
     id: Checksum256Type;
     name: string;
     endpoint: string;
-    // hyperion?: string;
+    hyperion?: string;
     websocket?: string;
     watchdawg?: string;
     namespace: string;
@@ -65,4 +65,4 @@ export interface ConnectedAccount {
     username: string;
 }
 
-export type AccountType = 'metamask' | 'walletconnect' | 'coinbasewallet';
+export type AccountType = 'metamask';

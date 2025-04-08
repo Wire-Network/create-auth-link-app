@@ -29,14 +29,6 @@ export class KeyService {
         return keys ? JSON.parse(keys) : undefined;
     }
 
-    storeLocalPubKey(address: string): void {
-        const storedKey = this.getPubKeyByAddress(address);
-        if (storedKey) {
-            this._ethPubKey = storedKey;
-            console.log('Public key loaded from storage for address:', address);
-        }
-    }
-
     async retrievePubKey(): Promise<string | undefined> {
         console.log('Retrieving public key...', this.pubKey);
 
@@ -57,6 +49,14 @@ export class KeyService {
         } catch (err: any) {
             console.error('Error retrieving public key:', err);
             throw new Error(err);
+        }
+    }
+
+    storeLocalPubKey(address: string): void {
+        const storedKey = this.getPubKeyByAddress(address);
+        if (storedKey) {
+            this._ethPubKey = storedKey;
+            console.log('Public key loaded from storage for address:', address);
         }
     }
 

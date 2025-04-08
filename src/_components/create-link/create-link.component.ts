@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ConnectService } from '../connect/connect.service';
 import { ToastService } from '../ui/toast/toast.service';
 import { AddressPipe } from '../../_pipes/address.pipe';
-import { IonIcon } from "@ionic/angular/standalone";
 import { AccountService } from '../../_services/account.service';
 import { LinkService } from '../../_services/link.service';
 import { TransactionService } from '../../_services/transaction.service';
@@ -26,7 +25,6 @@ export class CreateLinkComponent implements OnInit, OnDestroy {
     private subscriptions: Subscription[] = [];
 
     constructor(
-        private router: Router,
         private toast: ToastService,
         public connect: ConnectService,
         public accountService: AccountService,
@@ -54,7 +52,6 @@ export class CreateLinkComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        // Clean up subscriptions
         this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
