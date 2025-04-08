@@ -26,7 +26,6 @@ export class AccountService {
         
         try {
             // Try v1 API first
-            debugger;
             const res = await api.v1.chain.get_account(name);
             console.log('V1 API response:', JSON.stringify(res));
             return res as API.v1.AccountObject;

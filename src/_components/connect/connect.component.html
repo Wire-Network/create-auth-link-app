@@ -51,36 +51,22 @@
                             <span class="label">NET Available:</span>
                             <span class="value">{{ formatNetAvailable(accountService.currentAccount.net_limit.available) | number }} bytes</span>
                         </div>
+
+                        <!-- Link Status - Only show when account exists -->
+                        <div class="link-status">
+                            <h4>Link Status:</h4>
+                            <ng-container *ngIf="(linkService.linkExists$ | async) === false">
+                                <span class="status-badge warning">No Link</span>
+                                <p>No link between your Ethereum address and Wire account.</p>
+                                <button routerLink="/create-link" class="create-link-button">Create Link</button>
+                            </ng-container>
+                            <ng-container *ngIf="linkService.linkExists$ | async">
+                                <span class="status-badge success">Linked</span>
+                                <p>Your Ethereum address is linked to your Wire account.</p>
+                            </ng-container>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="link-status">
-                <h4>Link Status:</h4>
-                <ng-container *ngIf="(linkService.linkExists$ | async) === false">
-                    <span class="status-badge warning">No Link</span>
-                    <p>No link between your Ethereum address and Wire account.</p>
-                    
-                    <!-- Only show Create Link button if account exists -->
-                    <ng-container *ngIf="!accountService.noAccountSubject.value">
-                        <button routerLink="/create-link" class="create-link-button">Create Link</button>
-                    </ng-container>
-                    
-                    <!-- Show account creation instructions if no account exists -->
-                    <ng-container *ngIf="accountService.noAccountSubject.value">
-                        <div class="account-creation-info">
-                            <p>Create account first:</p>
-                            <ul>
-                                <li>If you are using Testnet, use Wire Hub to create an account</li>
-                                <li>If using local chain, use the clio command</li>
-                            </ul>
-                        </div>
-                    </ng-container>
-                </ng-container>
-                <ng-container *ngIf="linkService.linkExists$ | async">
-                    <span class="status-badge success">Linked</span>
-                    <p>Your Ethereum address is linked to your Wire account.</p>
-                </ng-container>
             </div>
             
             <div class="actions">
@@ -200,29 +186,6 @@
     
     p {
         margin: 8px 0;
-        color: var(--ion-color-medium);
-    }
-    
-    .account-creation-info {
-        background-color: rgba(var(--ion-color-warning-rgb), 0.1);
-        border: 1px solid rgba(var(--ion-color-warning-rgb), 0.3);
-        border-radius: 4px;
-        padding: 10px;
-        margin-top: 10px;
-    }
-    
-    .account-creation-info p {
-        font-weight: 500;
-        margin-bottom: 5px;
-    }
-    
-    .account-creation-info ul {
-        margin: 0;
-        padding-left: 20px;
-    }
-    
-    .account-creation-info li {
-        margin-bottom: 5px;
         color: var(--ion-color-medium);
     }
 </style>

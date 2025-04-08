@@ -35,6 +35,7 @@ export class ConnectComponent implements OnInit, OnDestroy {
             } else if (!connection) {
                 // Disconnected - clear account
                 this.accountService.clearAccount();
+                this.linkService.clearLink();
             }
         });
 
@@ -115,9 +116,14 @@ export class ConnectComponent implements OnInit, OnDestroy {
     }
 
     async disconnect() {
-        await this.connectService.disconnectWallet();
-        this.accountService.clearAccount();
-        this.linkService.resetLinkState();
+        try {
+            await this.connectService.disconnectWallet();
+            this.accountService.clearAccount();
+            this.linkService.clearLink();
+        } catch (error: any) {
+            console.error('Failed to disconnect:', error.message);
+            alert(error.message);
+        }
     }
 
     async selectAccount(address: string) {
@@ -137,12 +143,9 @@ export class ConnectComponent implements OnInit, OnDestroy {
 
     async changeAccount() {
         try {
-            // First clear the account in the account service
-            this.accountService.clearAccount();
-            // Make sure to clear link status
-            this.linkService.resetLinkState();
-            // Then clear the selected account in the connect service
             await this.connectService.clearSelectedAccount();
+            this.accountService.clearAccount();
+            this.linkService.clearLink();
         } catch (error: any) {
             console.error('Failed to change account:', error.message);
             alert(error.message);
@@ -150,7 +153,11 @@ export class ConnectComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.connectionSub?.unsubscribe();
-        this.linkSub?.unsubscribe();
+        if (this.connectionSub) {
+            this.connectionSub.unsubscribe();
+        }
+        if (this.linkSub) {
+            this.linkSub.unsubscribe();
+        }
     }
 }

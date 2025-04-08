@@ -1,61 +1,63 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ChainService } from '../../_services/chain.service';
 
 @Component({
     selector: 'app-chain-selector',
     standalone: true,
-    imports: [CommonModule, IonicModule],
+    imports: [CommonModule, IonicModule, FormsModule],
     template: `
         <div class="selector-container">
-            <select (change)="selectChain($event)" [value]="chainService.selectedChain.name">
-                <option *ngFor="let chain of chainService.availableChains" [value]="chain.name">
+            <select [(ngModel)]="selectedChainId" (ngModelChange)="onChainChange($event)">
+                <option *ngFor="let chain of chainService.availableChains" [value]="chain.id.toString()">
                     {{ chain.name }}
                 </option>
             </select>
+            <div class="select-arrow">▼</div>
         </div>
     `,
     styles: [`
         .selector-container {
             position: relative;
             display: inline-block;
+            min-width: 200px;
         }
         
-        .selector-container::after {
-            content: '';
+        .select-arrow {
             position: absolute;
-            right: 10px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 6px solid var(--ion-color-light);
             pointer-events: none;
+            color: var(--ion-color-light);
+            font-size: 14px;
+            z-index: 2;
         }
         
         select {
             background: var(--ion-color-dark);
             border: 1px solid var(--ion-color-medium);
-            border-radius: 4px;
+            border-radius: 8px;
             color: var(--ion-color-light);
             font-size: 15px;
             font-weight: 500;
-            padding: 10px 36px 10px 16px;
+            padding: 12px 36px 12px 16px;
             margin: 0;
             cursor: pointer;
             outline: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            min-width: 180px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
         }
 
         select:hover {
             border-color: var(--ion-color-primary);
+            background: var(--ion-color-dark-shade);
         }
 
         select:focus {
@@ -70,22 +72,41 @@ import { ChainService } from '../../_services/chain.service';
         select option {
             background: var(--ion-color-dark);
             color: var(--ion-color-light);
-            padding: 10px;
+            padding: 12px;
             font-size: 15px;
+        }
+
+        select option:checked {
+            background: var(--ion-color-primary);
+            color: var(--ion-color-light);
+        }
+
+        select option:hover {
+            background: var(--ion-color-primary-shade);
+        }
+
+        select {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
     `]
 })
 export class ChainSelectorComponent {
+    selectedChainId: string = '';
+
     constructor(
         public chainService: ChainService
-    ) {}
-
-    selectChain(event: Event) {
-        const select = event.target as HTMLSelectElement;
-        const selectedChain = this.chainService.availableChains.find(chain => chain.name === select.value);
-        
+    ) {
+        const selectedChain = this.chainService.selectedChain;
         if (selectedChain) {
-            this.chainService.selectChain(selectedChain.id.toString());
+            this.selectedChainId = selectedChain.id.toString();
+        }
+    }
+
+    onChainChange(chainId: string) {
+        if (chainId) {
+            this.chainService.selectChain(chainId);
         }
     }
 } 

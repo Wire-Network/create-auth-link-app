@@ -31,6 +31,16 @@ export class ChainService {
             selected: true
         },
         {
+            name: 'Local Chain 2',
+            id: "local-svet",
+            endpoint: 'https://svetla.gitgo.app',
+            // hyperion: 'https://dev-hyperion.gitgo.app/v1/',
+            // websocket: 'ws://det-dev.gitgo.app:8888',
+            namespace: 'sysio',
+            coreSymbol: 'SYS',
+            selected: false
+        },
+        {
             name: 'Wire Testnet',
             id: "065dcca2dc758af25bcf3b878260a19dd1b81e4597f2af15a262a0c67f1e0106",
             endpoint: 'https://testnet-00.wire.foundation',

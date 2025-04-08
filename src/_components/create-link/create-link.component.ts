@@ -70,12 +70,10 @@ export class CreateLinkComponent implements OnInit, OnDestroy {
             console.log('Retrieved public key:', pubKey);
             
             if (!pubKey) {
-                console.error('Failed to retrieve public key');
-                return undefined;
+                throw new Error('Failed to retrieve public key');
             }
-            debugger;
-            pubKey = pubKey.startsWith('0x') ? pubKey.substring(2) : pubKey;
             
+            pubKey = pubKey.startsWith('0x') ? pubKey.substring(2) : pubKey;
             console.log('Got public key for link creation:', pubKey);
 
             // Create the link transaction
@@ -86,12 +84,12 @@ export class CreateLinkComponent implements OnInit, OnDestroy {
 
             console.log('Link transaction result:', result);
 
-            if (result.status === 'executed') {
+            if (result && result.processed) {
                 console.log('Link transaction executed successfully');
                 this.step = 2;
                 this.toast.show({
                     header: 'Success',
-                    message: 'Link created successfully!',
+                    message: 'Link created successfully! Please proceed with authorization.',
                     color: 'success'
                 });
             } else {
@@ -100,10 +98,12 @@ export class CreateLinkComponent implements OnInit, OnDestroy {
         } catch (err: any) {
             console.error('Error in step1:', err);
             this.toast.show({
-                header: 'Error Creating Link:',
+                header: 'Error Creating Link',
                 message: err.toString(),
                 color: 'danger'
             });
+            // Don't advance the step if there's an error
+            this.step = 1;
         } finally {
             this.loading = false;
         }
@@ -123,7 +123,7 @@ export class CreateLinkComponent implements OnInit, OnDestroy {
 
             console.log('Link auth transaction result:', result);
 
-            if (result.status === 'executed') {
+            if (result && result.processed) {
                 console.log('Link auth transaction executed successfully');
                 this.step = 3;
                 this.toast.show({
@@ -139,10 +139,12 @@ export class CreateLinkComponent implements OnInit, OnDestroy {
         } catch (err: any) {
             console.error('Error in step2:', err);
             this.toast.show({
-                header: 'Error Authorizing Link:',
+                header: 'Error Authorizing Link',
                 message: err.toString(),
                 color: 'danger'
             });
+            // Keep the user on step 2 if there's an error
+            this.step = 2;
         } finally {
             this.loading = false;
         }
