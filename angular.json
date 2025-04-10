@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "wallet-connect-app": {
+    "create-auth-link-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/wallet-connect-app",
+            "outputPath": "dist/create-auth-link-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -69,10 +69,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "wallet-connect-app:build:production"
+              "buildTarget": "create-auth-link-app:build:production"
             },
             "development": {
-              "buildTarget": "wallet-connect-app:build:development"
+              "buildTarget": "create-auth-link-app:build:development"
             }
           },
           "defaultConfiguration": "development"

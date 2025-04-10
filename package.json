@@ -1,5 +1,5 @@
 {
-  "name": "wallet-connect-app",
+  "name": "create-auth-link-app",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:wallet-connect-app": "node dist/wallet-connect-app/server/server.mjs"
+    "serve:ssr:create-auth-link-app": "node dist/create-auth-link-app/server/server.mjs"
   },
   "private": true,
   "dependencies": {
